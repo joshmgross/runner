@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -304,6 +304,7 @@ namespace GitHub.Runner.Worker
             var entrypointToken = default(StringToken);
             var envToken = default(MappingToken);
             var mainToken = default(StringToken);
+            var runtimeToken = default(StringToken);
             var pluginToken = default(StringToken);
             var preToken = default(StringToken);
             var preEntrypointToken = default(StringToken);
@@ -333,6 +334,9 @@ namespace GitHub.Runner.Worker
                         break;
                     case "main":
                         mainToken = run.Value.AssertString("main");
+                        break;
+                    case "runtime":
+                        runtimeToken = run.Value.AssertString("runtime");
                         break;
                     case "plugin":
                         pluginToken = run.Value.AssertString("plugin");
@@ -401,6 +405,24 @@ namespace GitHub.Runner.Worker
                             CleanupCondition = postIfToken?.Value ?? "always()"
                         };
                     }
+                }
+                else if (string.Equals(usingToken.Value, "script", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.IsNullOrEmpty(mainToken?.Value))
+                    {
+                        throw new ArgumentNullException($"Entry script file is not provided.");
+                    }
+
+                    if (string.IsNullOrEmpty(runtimeToken?.Value))
+                    {
+                        throw new ArgumentNullException($"Runtime is not provided.");
+                    }
+
+                    return new RepositoryScriptActionExecutionData()
+                    {
+                        Script = mainToken.Value,
+                        Runtime = runtimeToken.Value,
+                    };
                 }
                 else
                 {

@@ -313,6 +313,12 @@ namespace GitHub.Runner.Worker
                             Trace.Info($"Action cleanup plugin: {plugin.PluginTypeName}.");
                         }
                     }
+                    else if (definition.Data.Execution.ExecutionType == ActionExecutionType.RepositoryScript)
+                    {
+                        var repositoryScriptAction = definition.Data.Execution as RepositoryScriptActionExecutionData;
+                        Trace.Info($"Action script file: {repositoryScriptAction.Script}.");
+                        Trace.Info($"Action script runtime: {repositoryScriptAction.Runtime}.");
+                    }
                     else
                     {
                         throw new NotSupportedException(definition.Data.Execution.ExecutionType.ToString());
@@ -911,6 +917,7 @@ namespace GitHub.Runner.Worker
         NodeJS,
         Plugin,
         Script,
+        RepositoryScript,
     }
 
     public sealed class ContainerActionExecutionData : ActionExecutionData
@@ -965,6 +972,16 @@ namespace GitHub.Runner.Worker
         public override ActionExecutionType ExecutionType => ActionExecutionType.Script;
         public override bool HasPre => false;
         public override bool HasPost => false;
+    }
+
+    public sealed class RepositoryScriptActionExecutionData : ActionExecutionData
+    {
+        public override ActionExecutionType ExecutionType => ActionExecutionType.RepositoryScript;
+        public override bool HasPre => false;
+        public override bool HasPost => false;
+        public string Script { get; set; }
+
+        public string Runtime { get; set; }
     }
 
     public abstract class ActionExecutionData

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using GitHub.DistributedTask.WebApi;
 using GitHub.Runner.Common.Util;
@@ -65,6 +65,11 @@ namespace GitHub.Runner.Worker.Handlers
                 // Runner plugin
                 handler = HostContext.CreateService<IRunnerPluginHandler>();
                 (handler as IRunnerPluginHandler).Data = data as PluginActionExecutionData;
+            }
+            else if (data.ExecutionType == ActionExecutionType.RepositoryScript)
+            {
+                handler = HostContext.CreateService<IRepositoryScriptActionHandler>();
+                (handler as IRepositoryScriptActionHandler).Data = data as RepositoryScriptActionExecutionData;
             }
             else
             {

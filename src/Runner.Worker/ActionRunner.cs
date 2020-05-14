@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -170,11 +170,14 @@ namespace GitHub.Runner.Worker
                 }
             }
 
-            foreach (var input in userInputs)
+            if (Action.Reference.Type == Pipelines.ActionSourceType.Repository)
             {
-                if (!validInputs.Contains(input))
+                foreach (var input in userInputs)
                 {
-                    ExecutionContext.Warning($"Unexpected input '{input}', valid inputs are ['{string.Join("', '", validInputs)}']");
+                    if (!validInputs.Contains(input))
+                    {
+                        ExecutionContext.Warning($"Unexpected input '{input}', valid inputs are ['{string.Join("', '", validInputs)}']");
+                    }
                 }
             }
 
