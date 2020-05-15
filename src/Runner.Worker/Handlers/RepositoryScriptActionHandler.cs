@@ -69,14 +69,18 @@ namespace GitHub.Runner.Worker.Handlers
             }
 
             // Resolve the runtime
-            // TODO: Find this on the path?
-            string runtime = Data.Runtime;
+            var runtimeSplit = Data.Runtime.Split(" ");
+            string runtime = runtimeSplit[0];
+            var runtimeArgs = "";
+            if (runtimeSplit.Length > 1) {
+                runtimeArgs = Data.Runtime.Substring(runtime.Length + 1) + " ";
+            }
 
             // Format the arguments passed to Go.
             // 1) Wrap the script file path in double quotes.
             // 2) Escape double quotes within the script file path. Double-quote is a valid
             // file name character on Linux.
-            string arguments = StepHost.ResolvePathForStepHost(StringUtil.Format(@"""{0}""", target.Replace(@"""", @"\""")));
+            string arguments = runtimeArgs + StepHost.ResolvePathForStepHost(StringUtil.Format(@"""{0}""", target.Replace(@"""", @"\""")));
 
 #if OS_WINDOWS
             // It appears that node.exe outputs UTF8 when not in TTY mode.

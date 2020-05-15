@@ -847,6 +847,11 @@ namespace GitHub.Runner.Worker
                     Trace.Info($"Action node.js file: {(actionDefinitionData.Execution as NodeJSActionExecutionData).Script}, no more preparation.");
                     return null;
                 }
+                else if (actionDefinitionData.Execution.ExecutionType == ActionExecutionType.RepositoryScript)
+                {
+                    Trace.Info($"Repository Action file: {(actionDefinitionData.Execution as RepositoryScriptActionExecutionData).Script}, no more preparation.");
+                    return null;
+                }
                 else if (actionDefinitionData.Execution.ExecutionType == ActionExecutionType.Plugin)
                 {
                     Trace.Info($"Action plugin: {(actionDefinitionData.Execution as PluginActionExecutionData).Plugin}, no more preparation.");
